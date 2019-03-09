@@ -1,27 +1,21 @@
 <?php
 
-$file = "Push-Service 2017_20180218-1727.txt";
+if(count($argv) != 2) {
+    die('Usage: php scan.php [logfile]');
+}
+if(!file_exists($argv[1])) {
+    die("Can't find file: ".$argv[1]);
+}
 
-$handle = fopen($file, "r");
+$handle = fopen($argv[1], "r");
 
-$content = fread($handle, filesize($file));
-
+$content = fread($handle, filesize($argv[1]));
 $content = explode("\n", $content);
 
 $lines = [];
-
-$i = 0;
-
 foreach ($content as $line) {
-    if(preg_match_all("/Internetverbindung wurde erfolgreich hergestellt. IP-Adresse: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/", $line, $variables)) $lines[$i] = $line;
-    $i++;
+    if(preg_match_all("/Internetverbindung wurde erfolgreich hergestellt. IP-Adresse: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/", $line, $variables)) $lines[] = $line;
 }
 
-var_dump($lines);
-
 $content = implode("\n", $lines);
-
-file_put_contents($file . ".result", $content);
-
-
-//if(preg_match_all("Internetverbindung wurde erfolgreich hergestellt. IP-Adresse: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/", $content, $variables)) var_dump($variables);
+file_put_contents($argv[1] . ".result", $content);
